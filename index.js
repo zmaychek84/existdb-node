@@ -49,6 +49,36 @@ Connection.prototype.get = function(path, callback) {
     req.end();
 };
 
+Connection.prototype.call = function(path, callback) {
+
+    var options = {
+        host: this.config.host,
+        port: this.config.port,
+        method: "GET",
+        path: path,
+        auth: this.config.auth || "guest:guest"
+    };
+    var stream = new DownloadStream();
+    callback(stream);
+    var req = http.request(options, function(res) {
+        res.setEncoding("UTF-8");
+        res.on("error", function(err) {
+            stream.emit("error", err);
+        });
+        res.on("data", function(data) {
+            stream.emit("data", data);
+        });
+        res.on("end", function() {
+            if (res.statusCode != 200) {
+                stream.emit("error", new Error(res.statusCode));
+                return;
+            }
+            stream.emit("end");
+        });
+    });
+    req.end();
+};
+
 Connection.prototype.store = function(file, collection /* , targetName, callback */) {
     var targetName, callback;
     if (typeof arguments[arguments.length - 1] === 'function') {

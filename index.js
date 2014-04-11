@@ -59,24 +59,25 @@ Connection.prototype.del = function(path, callback) {
         path: this.config.rest + path + params,
         auth: this.config.auth || "guest:guest"
     };
-    var stream = new DownloadStream();
-    callback(stream);
+
     var req = http.request(options, function(res) {
-        res.setEncoding("UTF-8");
-        res.on("error", function(err) {
-            stream.emit("error", err);
-        });
-        res.on("data", function(data) {
-            stream.emit("data", data);
-        });
         res.on("end", function() {
-            if (res.statusCode != 200) {
-                stream.emit("error", new Error(res.statusCode));
-                return;
+            if (callback) {
+                callback(null, res.statusCode);
             }
-            stream.emit("end");
+        });
+        res.on("error", function(e) {
+            callback(e);
         });
     });
+    is.on("data", function(data) {
+        req.write(data);
+    });
+    is.on("close", function() {
+        req.end();
+    });
+
+    
     req.end();
 };
 

@@ -59,25 +59,22 @@ Connection.prototype.del = function(path, callback) {
         path: this.config.rest + path + params,
         auth: this.config.auth || "guest:guest"
     };
+    var cb=callback;
 
     var req = http.request(options, function(res) {
+        var data = [];
+        res.on("data", function(chunk) {
+            data.push(chunk);
+        });
         res.on("end", function() {
-            if (callback) {
-                callback(null, res.statusCode);
-            }
+            var res = data.join("");
+            cb && cb(null, res);
         });
-        res.on("error", function(e) {
-            callback(e);
+        res.on("error", function(err) {
+            console.log("eXist get error: " + err);
+            cb && cb(err,null);
         });
     });
-    is.on("data", function(data) {
-        req.write(data);
-    });
-    is.on("close", function() {
-        req.end();
-    });
-
-    
     req.end();
 };
 
@@ -135,6 +132,7 @@ Connection.prototype.store = function(file, collection /* , targetName, callback
             };
             var is = fs.createReadStream(file, { bufferSize: 512 * 1024 });
             var req = http.request(options, function(res) {
+                var data=[];
                 res.on("end", function() {
                     if (callback) {
                         callback(null, res.statusCode);
@@ -142,6 +140,9 @@ Connection.prototype.store = function(file, collection /* , targetName, callback
                 });
                 res.on("error", function(e) {
                     callback(e);
+                });
+                res.on("data", function(chunk) {
+                    data.push(chunk);
                 });
             });
             is.on("data", function(data) {

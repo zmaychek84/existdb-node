@@ -40,7 +40,9 @@ Connection.prototype.get = function(path, callback) {
         });
         res.on("end", function() {
             if (res.statusCode != 200) {
-                stream.emit("error", new Error(res.statusCode));
+                var error = new Error("error in eXist get()");
+                error.statusCode = res.statusCode;
+                stream.emit("error", error);
                 return;
             }
             stream.emit("end");
@@ -99,7 +101,9 @@ Connection.prototype.call = function(path, callback) {
         });
         res.on("end", function() {
             if (res.statusCode != 200) {
-                stream.emit("error", new Error(res.statusCode));
+                var error = new Error(res.statusCode);
+                error.statusCode = res.statusCode;
+                stream.emit("error", error);
                 return;
             }
             stream.emit("end");
@@ -116,27 +120,62 @@ Connection.prototype.store = function(file, collection /* , targetName, callback
     if (arguments.length > 2 && typeof arguments[2] === 'string') {
         targetName = arguments[2];
     } else {
-        targetName = path.basename(file);
+        if (typeof file === 'string')
+           targetName = path.basename(file);
+       else {
+         callback && callback(new Error('targetName argument necessary when sending data'));
+         return
+       }
     }
 
     var self = this;
 
-    fs.exists(file, function(exists) {
-        if (exists) {
-            var options = {
+    if (typeof file === 'string')
+        fs.exists(file, function(exists) {
+            if (exists) {
+                var options = {
+                    host: self.config.host,
+                    port: self.config.port,
+                    method: "PUT",
+                    path: self.config.rest + collection + "/" + targetName,
+                    auth: self.config.auth || "guest:guest"
+                };
+                var is = fs.createReadStream(file, { bufferSize: 512 * 1024 });
+                var req = http.request(options, function(res) {
+                    var data=[];
+                    res.on("end", function() {
+                        callback && callback(null, res.statusCode);
+                    });
+                    res.on("error", function(e) {
+                        callback(e);
+                    });
+                    res.on("data", function(chunk) {
+                        data.push(chunk);
+                    });
+                });
+                is.on("data", function(data) {
+                    req.write(data);
+                });
+                is.on("close", function() {
+                    req.end();
+                });
+            }
+        });
+    else if (file instanceof Buffer) {
+
+        var options = {
                 host: self.config.host,
                 port: self.config.port,
                 method: "PUT",
                 path: self.config.rest + collection + "/" + targetName,
                 auth: self.config.auth || "guest:guest"
             };
-            var is = fs.createReadStream(file, { bufferSize: 512 * 1024 });
-            var req = http.request(options, function(res) {
-                var data=[];
-                res.on("end", function() {
-                    if (callback) {
-                        callback(null, res.statusCode);
-                    }
+
+        //var is = new UploadStream(file);
+        var req = http.request(options, function(res) {
+            var data=[];
+            res.on("end", function() {
+                    callback && callback(null, res.statusCode);
                 });
                 res.on("error", function(e) {
                     callback(e);
@@ -145,14 +184,13 @@ Connection.prototype.store = function(file, collection /* , targetName, callback
                     data.push(chunk);
                 });
             });
-            is.on("data", function(data) {
-                req.write(data);
-            });
-            is.on("close", function() {
-                req.end();
-            });
-        }
-    });
+       
+        req.write(file);
+        req.end();
+
+    }
+    else 
+        callback && callback(new Error('store accepts filename or Buffer only'));
 };
 
 /**

@@ -1,0 +1,285 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Glog.AI",
+          "organization": "Glog.AI",
+          "fullName": "Glog, Making software more secure",
+          "version": "1.0.0",
+          "semanticVersion": "1.0.0",
+          "informationUri": "https://www.glog.ai",
+          "rules": [
+            {
+              "id": "glog-127d9308-224f-4684-85c3-11c0e10e403d",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "resources.rules.raw-html-concat"
+                ]
+              }
+            },
+            {
+              "id": "glog-8042f0f2-1378-42bb-b39a-38a53b7fb7e8",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "resources.rules.raw-html-concat"
+                ]
+              }
+            },
+            {
+              "id": "glog-345ea263-bb4e-468e-8332-3e4ba628dc52",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "resources.rules.raw-html-concat"
+                ]
+              }
+            },
+            {
+              "id": "glog-af3a9680-82d6-46b5-bf61-64c85f032ad3",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "resources.rules.raw-html-concat"
+                ]
+              }
+            },
+            {
+              "id": "glog-f97e42a1-dce3-4eb3-b121-430ad4965ee6",
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "tags": [
+                  "resources.rules.raw-html-concat"
+                ]
+              }
+            },
+            {
+              "id": "glog-fa001227-ed74-479a-8b6d-584718a777cb",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nSQL Injection is a code injection technique that attackers can use to exploit vulnerabilities in a web application's database layer. This technique involves the insertion of malicious SQL statements into an entry field for execution. In JavaScript, this vulnerability can occur when untrusted input is combined with raw SQL queries.\n\nIn the provided code snippet, the application reads a file that contains an XQuery expression and then executes it. If an attacker can control the content of the \"examples/list-collection.xql\" file, they can inject arbitrary XQuery code, leading to a potential SQL Injection attack.\n\n## Mitigation Advice\n\nTo mitigate SQL Injection vulnerabilities, it is recommended to use parameterized queries or prepared statements. These techniques can ensure that user-supplied input is always treated as literal data and not part of the SQL command. \n\nAvoid using raw SQL queries with untrusted input. If it's necessary to include user input in SQL queries, always sanitize the input to ensure it does not contain SQL code.\n\n## Source Code Fix Recommendation\n\nThe code does not provide enough context to give a specific fix. However, a general recommendation would be to use parameterized queries or prepared statements. Here is an example of how to use parameterized queries with MySQL in Node.js:\n\n```javascript\nvar mysql = require('mysql');\nvar connection = mysql.createConnection({\n  host     : 'localhost',\n  user     : 'me',\n  password : 'secret',\n  database : 'my_db'\n});\n\nconnection.connect();\n\nlet userInput = \"user input\";\nlet sql = \"SELECT * FROM ?? WHERE ?? = ?\";\nlet inserts = ['users', 'id', userInput];\nsql = mysql.format(sql, inserts);\n\nconnection.query(sql, function (error, results, fields) {\n  if (error) throw error;\n  // ...\n});\n\nconnection.end();\n```\n\n## Library Dependencies\n\n- fs (built-in Node.js module)\n- mysql (or any other database driver depending on the database used)\n\n## References\n\n- [OWASP SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)\n- [CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')](https://cwe.mitre.org/data/definitions/89.html)"
+              },
+              "properties": {
+                "tags": [
+                  "resources.rules.node_sqli_injection"
+                ]
+              }
+            }
+          ],
+          "language": "en-US",
+          "contents": [
+            "localizedData",
+            "nonLocalizedData"
+          ],
+          "isComprehensive": false
+        }
+      },
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "glog-127d9308-224f-4684-85c3-11c0e10e403d",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Invalid input."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/upload.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 21,
+                  "startColumn": 9,
+                  "endLine": 21,
+                  "endColumn": 38,
+                  "snippet": {
+                    "text": "        console.log(\"Error: \" + err);"
+                  }
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "matchBasedId/v1": "bf3b7a86249f4578c67b9e49e969c35c793540d3a38d75ad34f76754aee894ee728425e4a94b1b7f77fe3818750ef263ae14f642ee9d3a82c1de435486657f24_0"
+          },
+          "properties": {}
+        },
+        {
+          "ruleId": "glog-8042f0f2-1378-42bb-b39a-38a53b7fb7e8",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Invalid input."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 57,
+                  "startColumn": 5,
+                  "endLine": 63,
+                  "endColumn": 6,
+                  "snippet": {
+                    "text": "    var options = {\n        host: this.config.host,\n        port: this.config.port,\n        method: \"DELETE\",\n        path: this.config.rest + path + params,\n        auth: this.config.auth || \"guest:guest\"\n    };"
+                  }
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "matchBasedId/v1": "b216eeb277530c5bd76c433d070809284166f1020713ae9ec7a58cd28b949ae332ee16992edf45afedaec38fd9d1e6372adb973e2b3b8adb783a0efe704c2bf9_1"
+          },
+          "properties": {}
+        },
+        {
+          "ruleId": "glog-345ea263-bb4e-468e-8332-3e4ba628dc52",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Invalid input."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 136,
+                  "startColumn": 17,
+                  "endLine": 142,
+                  "endColumn": 18,
+                  "snippet": {
+                    "text": "                var options = {\n                    host: self.config.host,\n                    port: self.config.port,\n                    method: \"PUT\",\n                    path: self.config.rest + collection + \"/\" + targetName,\n                    auth: self.config.auth || \"guest:guest\"\n                };"
+                  }
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "matchBasedId/v1": "d09af3963d5b706637697ce2e1040115c787d18987fd70ff7aa4d7781f4329bd793c811bfe67034f07260731f98d6905a54d0e58f4dbbdfcfe3b5be440291c7b_0"
+          },
+          "properties": {}
+        },
+        {
+          "ruleId": "glog-af3a9680-82d6-46b5-bf61-64c85f032ad3",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Invalid input."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 166,
+                  "startColumn": 9,
+                  "endLine": 172,
+                  "endColumn": 14,
+                  "snippet": {
+                    "text": "        var options = {\n                host: self.config.host,\n                port: self.config.port,\n                method: \"PUT\",\n                path: self.config.rest + collection + \"/\" + targetName,\n                auth: self.config.auth || \"guest:guest\"\n            };"
+                  }
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "matchBasedId/v1": "d09af3963d5b706637697ce2e1040115c787d18987fd70ff7aa4d7781f4329bd793c811bfe67034f07260731f98d6905a54d0e58f4dbbdfcfe3b5be440291c7b_1"
+          },
+          "properties": {}
+        },
+        {
+          "ruleId": "glog-f97e42a1-dce3-4eb3-b121-430ad4965ee6",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Invalid input."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "index.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 24,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 6,
+                  "snippet": {
+                    "text": "    var options = {\n        host: this.config.host,\n        port: this.config.port,\n        method: \"GET\",\n        path: this.config.rest + path + params,\n        auth: this.config.auth || \"guest:guest\"\n    };"
+                  }
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "matchBasedId/v1": "b216eeb277530c5bd76c433d070809284166f1020713ae9ec7a58cd28b949ae332ee16992edf45afedaec38fd9d1e6372adb973e2b3b8adb783a0efe704c2bf9_0"
+          },
+          "properties": {}
+        },
+        {
+          "ruleId": "glog-fa001227-ed74-479a-8b6d-584718a777cb",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "SQL Injection Risk from Untrusted Input Combined with Raw SQL Query"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/query-json.js",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 1,
+                  "endLine": 20,
+                  "endColumn": 57,
+                  "snippet": {
+                    "text": "var xquery = fs.readFileSync(\"examples/list-collection.xql\", \"UTF-8\");\n\nvar query = connection.query(xquery, { chunkSize: 100 });"
+                  }
+                }
+              }
+            }
+          ],
+          "fingerprints": {
+            "matchBasedId/v1": "401656fc04202d23d83c8ab61f5c116b433d218b8bfe21fbabd1815f3c0533bcf690376697cf4f2e37348b51cabff6f128683c88178872906f519fb9cc944ab4_0"
+          },
+          "properties": {}
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
